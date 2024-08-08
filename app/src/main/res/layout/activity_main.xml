@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.wear.widget.BoxInsetLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:deviceIds="wear"
+    tools:ignore="MissingClass">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_boxedEdges="all">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/finishButton"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:background="@drawable/round_button_bleu"
+            android:elevation="4dp"
+            android:text="כל הכבוד הלל         לילה טוב"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:padding="0dp"
+            android:textColor="#000000"
+            android:visibility="gone"/>
+        <TextView
+            android:id="@+id/countdownText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="36sp"
+            android:visibility="gone"
+            tools:text="03:00"
+            />
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+        <Button
+            android:id="@+id/confirmButton"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_gravity="center"
+            android:background="@drawable/round_button_green"
+            android:text="✓"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:layout_margin="10dp"
+            android:visibility="gone"/>
+
+        <Button
+            android:layout_gravity="center"
+            android:id="@+id/snoozeButton"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:background="@drawable/round_button_yellow"
+            android:text="Z"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:layout_margin="10dp"
+            android:visibility="gone"
+             />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/startButton"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_gravity="center"
+        android:background="@drawable/sun"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:padding="0dp"
+        android:text="בוקר טוב                         הלל"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"
+
+
+        />
+</LinearLayout>
+
+    </FrameLayout>
+</androidx.wear.widget.BoxInsetLayout>
+

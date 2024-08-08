@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "563170323266",
+    "firebase_url": "https://hillelapp-b5ca1-default-rtdb.firebaseio.com",
+    "project_id": "hillelapp-b5ca1",
+    "storage_bucket": "hillelapp-b5ca1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563170323266:android:e723f38be05fe65762f6db",
+        "android_client_info": {
+          "package_name": "com.example.hillelapps"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9wU2e2MKFEumfV6mw9ZvSNo8L0IsK-Xs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563170323266:android:565e8ee1cac0d5ac62f6db",
+        "android_client_info": {
+          "package_name": "com.example.parenthillel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9wU2e2MKFEumfV6mw9ZvSNo8L0IsK-Xs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

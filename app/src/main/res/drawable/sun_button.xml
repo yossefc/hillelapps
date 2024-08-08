@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/sun_button.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#FFFF00"/> <!-- Couleur du soleil -->
+        </shape>
+    </item>
+    <!-- Ajouter des rayons autour du soleil -->
+    <item android:right="10dp" android:left="10dp" android:top="10dp" android:bottom="10dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFF00"/>
+            <size android:width="10dp" android:height="50dp"/>
+        </shape>
+    </item>
+    <!-- Ajouter plus de rayons si nécessaire -->
+</layer-list>
