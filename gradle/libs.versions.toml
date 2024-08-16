@@ -10,6 +10,7 @@ firebaseAnalyticsKtx = "22.0.2"
 firebaseBom = "33.1.2"
 firebaseBomVersion = "33.1.2"
 fragmentKtx = "1.8.2"
+googleFirebaseFirestoreKtx = "24.9.1"
 kotlin = "1.9.24"
 material = "1.6.8"
 material3 = "1.2.1"
@@ -21,6 +22,7 @@ activityCompose = "1.9.1"
 coreSplashscreen = "1.0.1"
 roomCompiler = "2.6.1"
 roomKtxVersion = "2.6.1"
+threetenabp = "1.4.6"
 ui = "1.6.8"
 uiTooling = "1.6.8"
 uiToolingPreview = "1.6.8"
@@ -35,6 +37,10 @@ roomCommon = "2.6.1"
 roomKtx = "2.6.1"
 workRuntimeKtx = "2.9.0"
 googleFirebaseAppdistribution = "5.0.0"
+firebaseFirestoreKtx = "25.0.0"
+playServicesGames = "23.2.0"
+zmanim = "2.5.0"
+zmanimVersion = "VERSION"
 
 [libraries]
 androidx-compiler = { module = "androidx.compose.compiler:compiler", version = "1.5.14" }
@@ -60,8 +66,11 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-bom-v3010 = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
 firebase-config-ktx = { module = "com.google.firebase:firebase-config-ktx" }
 firebase-storage-ktx = { module = "com.google.firebase:firebase-storage-ktx" }
+google-firebase-firestore-ktx-v2491 = { module = "com.google.firebase:firebase-firestore-ktx", version.ref = "googleFirebaseFirestoreKtx" }
+kosherjava-zmanim = { module = "com.github.kosherjava:zmanim", version.ref = "zmanimVersion" }
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+threetenabp = { module = "com.jakewharton.threetenabp:threetenabp", version.ref = "threetenabp" }
 ui = { group = "androidx.compose.ui", name = "ui" }
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -80,6 +89,9 @@ androidx-room-common = { group = "androidx.room", name = "room-common", version.
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
 wear-v120 = { module = "androidx.wear:wear", version.ref = "androidxWear" }
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+play-services-games = { group = "com.google.android.gms", name = "play-services-games", version.ref = "playServicesGames" }
+zmanim = { group = "com.github.KosherJava", name = "zmanim", version.ref = "zmanim" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

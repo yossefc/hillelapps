@@ -56,6 +56,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.zmanim)
+    implementation (libs.threetenabp)
     implementation (libs.wear.v120)
     implementation (platform(libs.firebase.bom.v3010))
     implementation (libs.firebase.config.ktx)
@@ -82,11 +84,16 @@ dependencies {
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.play.services.games)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
     implementation(libs.androidx.room.runtime)
     annotationProcessor(libs.androidx.room.compiler)
+    implementation (libs.google.firebase.firestore.ktx.v2491)
+
+
 
 }
