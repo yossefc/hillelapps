@@ -19,8 +19,6 @@
             android:orientation="vertical"
             android:gravity="center">
 
-
-
             <Button
                 android:id="@+id/confirmButtonInChrono"
                 android:layout_width="40dp"
@@ -52,7 +50,19 @@
                 android:layout_marginTop="10dp"
                 android:visibility="gone"/>
 
+            <!-- Bouton récompenses avec taille corrigée -->
+            <Button
+                android:id="@+id/rewardsButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/round_button_yellow"
+                android:text="🏆"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:layout_marginTop="10dp"
+                android:visibility="visible"/>
         </LinearLayout>
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/finishButton"
             android:layout_width="150dp"
@@ -68,52 +78,48 @@
             android:textColor="#000000"
             android:visibility="gone"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center">
-        <Button
-            android:id="@+id/confirmButton"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:layout_gravity="center"
-            android:background="@drawable/round_button_green"
-            android:text="✓"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:layout_margin="10dp"
-            android:visibility="gone"/>
+            <Button
+                android:id="@+id/confirmButton"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:layout_gravity="center"
+                android:background="@drawable/round_button_green"
+                android:text="✓"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:layout_margin="10dp"
+                android:visibility="gone"/>
 
-        <Button
-            android:layout_gravity="center"
-            android:id="@+id/snoozeButton"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:background="@drawable/round_button_yellow"
-            android:text="Z"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:layout_margin="10dp"
-            android:visibility="gone"
-             />
+            <Button
+                android:layout_gravity="center"
+                android:id="@+id/snoozeButton"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:background="@drawable/round_button_yellow"
+                android:text="Z"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:layout_margin="10dp"
+                android:visibility="gone"/>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/startButton"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:layout_gravity="center"
-        android:background="@drawable/sun"
-        android:elevation="4dp"
-        android:gravity="center"
-        android:padding="0dp"
-        android:text="בוקר טוב                         הלל"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-</LinearLayout>
-
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/startButton"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_gravity="center"
+                android:background="@drawable/sun"
+                android:elevation="4dp"
+                android:gravity="center"
+                android:padding="0dp"
+                android:text="בוקר טוב                         הלל"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
     </FrameLayout>
 </androidx.wear.widget.BoxInsetLayout>
-

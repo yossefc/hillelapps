@@ -5,23 +5,28 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <uses-feature android:name="android.hardware.type.watch" />
+
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
-
     <application
-
         android:allowBackup="true"
         android:icon="@mipmap/ic_hillel"
-        android:theme="@style/AppTheme"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        >
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".presentation.MiniGameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.RewardsActivity"
+            android:exported="false" />
+
         <uses-library
             android:name="com.google.android.wearable"
             android:required="true" />
-
         <!--
                Set to true if your app is Standalone, that is, it does not require the handheld
                app to run.
@@ -31,20 +36,21 @@
             android:value="true" />
 
         <activity
-            android:name="com.example.hillelapps.presentation.MainActivity"
+            android:name=".presentation.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
+            android:showOnLockScreen="true"
             android:taskAffinity=""
             android:theme="@style/AppTheme"
-            android:showOnLockScreen="true"
             android:turnScreenOn="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".presentation.AlarmReceiver" />
 
+        <receiver android:name=".presentation.AlarmReceiver" />
     </application>
 
 </manifest>

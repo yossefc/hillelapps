@@ -86,6 +86,8 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.play.services.games)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)

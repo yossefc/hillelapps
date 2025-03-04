@@ -6,8 +6,6 @@
 
 package com.example.hillelapps.presentation
 
-
-
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.Dialog
@@ -57,19 +55,19 @@ import com.google.firebase.analytics.FirebaseAnalytics
 
 class MainActivity : FragmentActivity() {
 
-
-     private lateinit var countdownText: TextView
-     private lateinit var countDownTimer: CountDownTimer
-     private lateinit var mediaPlayer: MediaPlayer
-     private lateinit var vibrator: Vibrator
-     private lateinit var confirmButton: Button
-     private lateinit var startButton: Button
-     private lateinit var finishButton: Button
-     private lateinit var snoozeButton: Button
-     private var minutesRepousser: Int = 15
-     private var minutesReplay: Int = 180
-     private var snoozeCount = 0
-     private lateinit var database: FirebaseDatabase
+    private lateinit var countdownText: TextView
+    private lateinit var countDownTimer: CountDownTimer
+    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var vibrator: Vibrator
+    private lateinit var confirmButton: Button
+    private lateinit var startButton: Button
+    private lateinit var finishButton: Button
+    private lateinit var snoozeButton: Button
+    private lateinit var rewardsButton: Button
+    private var minutesRepousser: Int = 15
+    private var minutesReplay: Int = 180
+    private var snoozeCount = 0
+    private lateinit var database: FirebaseDatabase
     private var lastCheckedMinute = -1
     private var lasthour = -1
     private lateinit var firebaseAnalytics: FirebaseAnalytics
@@ -80,119 +78,127 @@ class MainActivity : FragmentActivity() {
     private var currentCountdownMinutes: Int = 180
     private var intervalRep: Int = 180
 
-
+    // Nouveaux gestionnaires pour le système de points et célébrations
+    private lateinit var pointsManager: PointsManager
+    private lateinit var celebrationManager: CelebrationManager
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-     @SuppressLint("ClickableViewAccessibility")
-     override fun onCreate(savedInstanceState: Bundle?) {
-         super.onCreate(savedInstanceState)
-         setContentView(R.layout.activity_main)
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-         // Initialiser Firebase Analytics
-         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        // Initialiser Firebase Analytics
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
-         // Initialiser le Handler et le Runnable
-         stopAlarmHandler = Handler(Looper.getMainLooper())
-         stopAlarmRunnable = Runnable {
-             stopAlarm()
-         }
-         try {
-             database = Firebase.database
-             val buttonAnimation = AnimationUtils.loadAnimation(this, R.anim.button_press)
+        // Initialiser les gestionnaires de points et de célébrations
+        pointsManager = PointsManager(this)
+        celebrationManager = CelebrationManager(this)
 
-             countdownText = findViewById(R.id.countdownText)
-             confirmButton = findViewById(R.id.confirmButton)
-             snoozeButton = findViewById(R.id.snoozeButton)
-             finishButton = findViewById(R.id.finishButton)
-             startButton = findViewById(R.id.startButton)
-             confirmButtonInChrono = findViewById(R.id.confirmButtonInChrono)
-             adjustTimeButton = findViewById(R.id.adjustTimeButton)
+        // Initialiser le Handler et le Runnable
+        stopAlarmHandler = Handler(Looper.getMainLooper())
+        stopAlarmRunnable = Runnable {
+            stopAlarm()
+        }
+        try {
+            database = Firebase.database
+            val buttonAnimation = AnimationUtils.loadAnimation(this, R.anim.button_press)
 
+            countdownText = findViewById(R.id.countdownText)
+            confirmButton = findViewById(R.id.confirmButton)
+            snoozeButton = findViewById(R.id.snoozeButton)
+            finishButton = findViewById(R.id.finishButton)
+            startButton = findViewById(R.id.startButton)
+            confirmButtonInChrono = findViewById(R.id.confirmButtonInChrono)
+            adjustTimeButton = findViewById(R.id.adjustTimeButton)
+
+            // Initialiser le bouton des récompenses
+            rewardsButton = findViewById(R.id.rewardsButton)
+            rewardsButton.setOnClickListener {
+                showRewards()
+            }
 
             mediaPlayer =
-                 MediaPlayer.create(this, Settings.System.DEFAULT_ALARM_ALERT_URI)
-             vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                 val vibratorManager =
-                     getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
-                 vibratorManager.defaultVibrator
-             } else {
-                 @Suppress("DEPRECATION")
-                 getSystemService(VIBRATOR_SERVICE) as Vibrator
-             }
+                MediaPlayer.create(this, Settings.System.DEFAULT_ALARM_ALERT_URI)
+            vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val vibratorManager =
+                    getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
+                vibratorManager.defaultVibrator
+            } else {
+                @Suppress("DEPRECATION")
+                getSystemService(VIBRATOR_SERVICE) as Vibrator
+            }
 
-             //  la sonnerie fonctionne même si l'écran est éteint,
-             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            //  la sonnerie fonctionne même si l'écran est éteint,
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-             WindowCompat.setDecorFitsSystemWindows(window, false)
-             WindowInsetsControllerCompat(window, window.decorView).let { controller ->
-                 controller.hide(WindowInsetsCompat.Type.systemBars())
-                 controller.systemBarsBehavior =
-                     WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-             }
-             //reste reveille
-             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            WindowInsetsControllerCompat(window, window.decorView).let { controller ->
+                controller.hide(WindowInsetsCompat.Type.systemBars())
+                controller.systemBarsBehavior =
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+            //reste reveille
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-             adjustTimeButton.setOnClickListener {
-                 countDownTimer.cancel()
-                 showSnoozeDialog(currentCountdownMinutes,true)
-             }
-             startButton.setOnTouchListener { v, event ->
-                 when (event.action) {
-                     MotionEvent.ACTION_DOWN -> v.startAnimation(buttonAnimation)
-                     MotionEvent.ACTION_UP -> v.clearAnimation()
-                 }
-                 false
-             }
-             startButton.setOnClickListener {
-                 Log.d("MainActivity11", "Bouton Start cliqué")
-                 try{
-                     mediaPlayer.stop()
-                     mediaPlayer.prepare()
-                     startButton.visibility = View.GONE
-                     countdownText.visibility = View.VISIBLE
-                     startCountdown(minutesReplay)
-                     Log.i("MainActivity11", "On startButton affiché avec succès")
-                 }catch (e: Exception) {
-                     Log.e("MainActivity11", "Une startButton inattendue s'est produite", e)}
-             }
-             confirmButtonInChrono.setOnClickListener {
-                 countDownTimer.cancel()
-                 snoozeCount = 0  // Réinitialiser le compteur quand l'alarme est confirmée
-                 updateSnoozeButton()
-                 saveConfirmationTime()
-                 startCountdown(minutesReplay)
+            adjustTimeButton.setOnClickListener {
+                countDownTimer.cancel()
+                showSnoozeDialog(currentCountdownMinutes,true)
+            }
+            startButton.setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> v.startAnimation(buttonAnimation)
+                    MotionEvent.ACTION_UP -> v.clearAnimation()
+                }
+                false
+            }
+            startButton.setOnClickListener {
+                Log.d("MainActivity11", "Bouton Start cliqué")
+                try{
+                    mediaPlayer.stop()
+                    mediaPlayer.prepare()
+                    startButton.visibility = View.GONE
+                    countdownText.visibility = View.VISIBLE
+                    startCountdown(minutesReplay)
+                    Log.i("MainActivity11", "On startButton affiché avec succès")
+                }catch (e: Exception) {
+                    Log.e("MainActivity11", "Une startButton inattendue s'est produite", e)}
+            }
+            confirmButtonInChrono.setOnClickListener {
+                countDownTimer.cancel()
+                snoozeCount = 0  // Réinitialiser le compteur quand l'alarme est confirmée
+                updateSnoozeButton()
+                saveConfirmationTime()
+                startCountdown(minutesReplay)
+            }
+            confirmButton.setOnClickListener {
+                stopAlarm()
+                resetUI()
+                snoozeCount = 0  // Réinitialiser le compteur quand l'alarme est confirmée
+                updateSnoozeButton()
+                saveConfirmationTime()
+                startCountdown(minutesReplay)
+            }
+            snoozeButton.setOnClickListener {
+                if (snoozeCount == 0) {
+                    showSnoozeDialog(intervalRep,false)
+                } else {
+                    snoozeAlarm(minutesRepousser,false)
+                }
+            }
 
-             }
-             confirmButton.setOnClickListener {
-                 stopAlarm()
-                 resetUI()
-                 snoozeCount = 0  // Réinitialiser le compteur quand l'alarme est confirmée
-                 updateSnoozeButton()
-                 saveConfirmationTime()
-                 startCountdown(minutesReplay)
-
-             }
-             snoozeButton.setOnClickListener {
-                 if (snoozeCount == 0) {
-                     showSnoozeDialog(intervalRep,false)
-                 } else {
-                     snoozeAlarm(minutesRepousser,false)
-                 }
-             }
-
-
-             Log.i("MainActivity11", "On create affiché avec succès")
-         }catch (e: Exception) {
-             Log.e("MainActivity11", "Une onCreate inattendue s'est produite", e)
-         }
-     }
+            Log.i("MainActivity11", "On create affiché avec succès")
+        }catch (e: Exception) {
+            Log.e("MainActivity11", "Une onCreate inattendue s'est produite", e)
+        }
+    }
 
     private fun startCountdown(minutes: Int) {
         val milliseconds = minutes * 60 * 1000L
 
         countdownText.visibility = View.VISIBLE
-        confirmButtonInChrono.visibility =View.VISIBLE
-        adjustTimeButton.visibility =View.VISIBLE
+        confirmButtonInChrono.visibility = View.VISIBLE
+        adjustTimeButton.visibility = View.VISIBLE
 
         countDownTimer = object : CountDownTimer(milliseconds, 1000) { // Changé à 1000ms (1 seconde)
             @SuppressLint("DefaultLocale")
@@ -209,26 +215,21 @@ class MainActivity : FragmentActivity() {
                     // Vérifier seulement si la minute a changé
                     if (minut != lastCheckedMinute) {
                         lastCheckedMinute = minut
-                        //Log.i("MainActivity11", "Heure actuelle : $hourOfDay:$minut")
 
-
-                        if (hourOfDay >0  && hourOfDay <20 && finishButton.visibility == View.VISIBLE) {
-                            //Log.i("MainActivity12", "startButton affiché avec succès")
+                        if (hourOfDay > 0 && hourOfDay < 20 && finishButton.visibility == View.VISIBLE) {
                             cancel()
                             finishButton.visibility = View.GONE
                             startButton.visibility = View.VISIBLE
                             countdownText.visibility = View.GONE
-                            confirmButtonInChrono.visibility =View.GONE
-                            adjustTimeButton.visibility =View.GONE
+                            confirmButtonInChrono.visibility = View.GONE
+                            adjustTimeButton.visibility = View.GONE
 
-                        } else if (hourOfDay > 19 && lasthour== -1) {
-
-                            //Log.i("MainActivity111", "finishButton affiché avec succès")
+                        } else if (hourOfDay > 23 && minut == 59 && lasthour == -1) {
                             cancel()
                             finishButton.visibility = View.VISIBLE
                             countdownText.visibility = View.GONE
-                            confirmButtonInChrono.visibility =View.GONE
-                            adjustTimeButton.visibility =View.GONE
+                            confirmButtonInChrono.visibility = View.GONE
+                            adjustTimeButton.visibility = View.GONE
                             startCountdown(4000)
                             return@runOnUiThread // Sortir après avoir démarré un nouveau compte à rebours
                         }
@@ -247,15 +248,26 @@ class MainActivity : FragmentActivity() {
             }
         }.start()
     }
+
     private fun playAlarm() {
         mediaPlayer.isLooping = true
         mediaPlayer.start()
 
         // Ajout de vibration
         if (vibrator.hasVibrator()) {
-            val vibrationPattern = longArrayOf(0, 500, 500)
-            vibrator.vibrate(VibrationEffect.createWaveform(vibrationPattern, 0))
+            // Si l'utilisateur a un bon streak, réduire l'intensité de la vibration
+            val currentStreak = pointsManager.getCurrentStreak()
+            if (currentStreak > 3) {
+                // Vibration plus douce pour récompenser la constance
+                val vibrationPattern = longArrayOf(0, 300, 700)
+                vibrator.vibrate(VibrationEffect.createWaveform(vibrationPattern, 0))
+            } else {
+                // Vibration normale
+                val vibrationPattern = longArrayOf(0, 500, 500)
+                vibrator.vibrate(VibrationEffect.createWaveform(vibrationPattern, 0))
+            }
         }
+
         // Arrêter l'alarme après 2 minutes
         stopAlarmHandler.postDelayed(stopAlarmRunnable, 120000)
 
@@ -266,8 +278,8 @@ class MainActivity : FragmentActivity() {
                 snoozeButton.isEnabled = true
                 snoozeButton.alpha = 1f
                 countdownText.visibility = View.GONE
-                confirmButtonInChrono.visibility =View.GONE
-                adjustTimeButton.visibility =View.GONE
+                confirmButtonInChrono.visibility = View.GONE
+                adjustTimeButton.visibility = View.GONE
                 val blinkAnimation = AnimationUtils.loadAnimation(this@MainActivity, R.anim.blink)
                 confirmButton.startAnimation(blinkAnimation)
                 snoozeButton.startAnimation(blinkAnimation)
@@ -279,13 +291,13 @@ class MainActivity : FragmentActivity() {
                 snoozeButton.isEnabled = true
                 snoozeButton.alpha = 1f
                 countdownText.visibility = View.GONE
-                confirmButtonInChrono.visibility =View.GONE
-                adjustTimeButton.visibility =View.GONE
+                confirmButtonInChrono.visibility = View.GONE
+                adjustTimeButton.visibility = View.GONE
                 updateSnoozeButton()
             }
-
         }
     }
+
     private fun stopAlarm() {
         mediaPlayer.stop()
         mediaPlayer.prepare()
@@ -293,11 +305,11 @@ class MainActivity : FragmentActivity() {
         confirmButton.clearAnimation()
         snoozeButton.clearAnimation()
         countdownText.visibility = View.VISIBLE
-        confirmButtonInChrono.visibility =View.VISIBLE
-        adjustTimeButton.visibility =View.VISIBLE
+        confirmButtonInChrono.visibility = View.VISIBLE
+        adjustTimeButton.visibility = View.VISIBLE
         stopAlarmHandler.removeCallbacks(stopAlarmRunnable)
-        //startCountdown()
     }
+
     private fun snoozeAlarm(minutes: Int, isAdjustTime: Boolean ) {
         if (snoozeCount < 2) {
             stopAlarm()
@@ -309,13 +321,14 @@ class MainActivity : FragmentActivity() {
             confirmButton.visibility = View.GONE
             snoozeButton.visibility = View.GONE
             countdownText.visibility = View.VISIBLE
-            confirmButtonInChrono.visibility =View.VISIBLE
-            adjustTimeButton.visibility =View.VISIBLE
+            confirmButtonInChrono.visibility = View.VISIBLE
+            adjustTimeButton.visibility = View.VISIBLE
         } else {
             snoozeButton.isEnabled = false
             snoozeButton.alpha = 0.5f
         }
     }
+
     private fun updateSnoozeButton() {
         Log.d("MainActivity11", "211")
         snoozeButton.text = when (snoozeCount) {
@@ -325,10 +338,11 @@ class MainActivity : FragmentActivity() {
         }
         Log.d("MainActivity11", "21")
     }
+
     private fun resetUI() {
         countdownText.visibility = View.VISIBLE
-        confirmButtonInChrono.visibility =View.VISIBLE
-        adjustTimeButton.visibility =View.VISIBLE
+        confirmButtonInChrono.visibility = View.VISIBLE
+        adjustTimeButton.visibility = View.VISIBLE
         confirmButton.visibility = View.GONE
         snoozeButton.visibility = View.GONE
         Log.d("MainActivity11", "21")
@@ -337,58 +351,97 @@ class MainActivity : FragmentActivity() {
         Log.d("MainActivity11", "22")
         updateSnoozeButton()
     }
-     override fun onDestroy() {
+
+    override fun onDestroy() {
         super.onDestroy()
         mediaPlayer.release()
         vibrator.cancel()
-
     }
-     @SuppressLint("SuspiciousIndentation")
-     private fun saveConfirmationTime() {
 
-             val currentTime = System.currentTimeMillis()
-             val confirmation = Confirmation(timestamp = currentTime)
-         Log.i("MainActivity11", "AppDatabase affiché avec succès $confirmation")
-                 CoroutineScope(Dispatchers.IO).launch {
-                     try {
-                         AppDatabase.getDatabase(applicationContext).confirmationDao()
-                             .insert(confirmation)
-                     Log.i("MainActivity11", "AppDatabase affiché avec succès $confirmation")
-                 }catch (e: Exception) {
-             Log.e("MainActivity11", "Une AppDatabase inattendue s'est produite", e)
-         }
+    @SuppressLint("SuspiciousIndentation")
+    private fun saveConfirmationTime() {
+        val currentTime = System.currentTimeMillis()
+        val confirmation = Confirmation(timestamp = currentTime)
+        Log.i("MainActivity11", "AppDatabase affiché avec succès $confirmation")
 
-                     // Sauvegarde locale
+        // Ajouter des points pour la confirmation
+        val calendar = Calendar.getInstance()
+        val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
 
-                     try {
-                         // Tentative de sauvegarde Firebase
-                         val reference = database.getReference("confirmations")
-                         reference.push().setValue(currentTime)
-                             .addOnSuccessListener {
-                                 Log.d("Firebase", "Confirmation time saved successfully")
-                                 scheduleAlarm(currentTime)
-                             }
-                             .addOnFailureListener { e ->
-                                 Log.e("Firebase", "Error saving confirmation time", e)
-                                 // Planifier une synchronisation différée
-                                 val syncWork = OneTimeWorkRequestBuilder<SyncWorker>().build()
-                                 WorkManager.getInstance(applicationContext).enqueue(syncWork)
-                             }
-                         Log.i("MainActivity11", "getReference affiché avec succès")
-                     } catch (e: Exception) {
-                         Log.e("MainActivity11", "Une getReference inattendue s'est produite", e)
-                     }
+        // Considérer que la confirmation est "à temps" si elle est faite avant 21h
+        val isOnTime = hourOfDay < 21
+        pointsManager.addPointsForConfirmation(isOnTime)
 
-                 }
+        // Afficher une animation de célébration
+        val rootView = findViewById<View>(android.R.id.content)
+        celebrationManager.showMedicationTakenCelebration(rootView)
 
+        // Vérifier si de nouvelles récompenses sont débloquées
+        checkForNewRewards()
 
-     }
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                AppDatabase.getDatabase(applicationContext).confirmationDao()
+                    .insert(confirmation)
+                Log.i("MainActivity11", "AppDatabase affiché avec succès $confirmation")
+            } catch (e: Exception) {
+                Log.e("MainActivity11", "Une AppDatabase inattendue s'est produite", e)
+            }
+
+            // Sauvegarde locale
+            try {
+                // Tentative de sauvegarde Firebase
+                val reference = database.getReference("confirmations")
+                reference.push().setValue(currentTime)
+                    .addOnSuccessListener {
+                        Log.d("Firebase", "Confirmation time saved successfully")
+                        scheduleAlarm(currentTime)
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Firebase", "Error saving confirmation time", e)
+                        // Planifier une synchronisation différée
+                        val syncWork = OneTimeWorkRequestBuilder<SyncWorker>().build()
+                        WorkManager.getInstance(applicationContext).enqueue(syncWork)
+                    }
+                Log.i("MainActivity11", "getReference affiché avec succès")
+            } catch (e: Exception) {
+                Log.e("MainActivity11", "Une getReference inattendue s'est produite", e)
+            }
+        }
+    }
+
+    // Méthode pour vérifier les nouvelles récompenses
+    private fun checkForNewRewards() {
+        val availableRewards = pointsManager.getAvailableRewards()
+        for (reward in availableRewards) {
+            // Si la récompense peut être débloquée mais ne l'est pas encore
+            if (pointsManager.canUnlockLevel(reward.id) && !pointsManager.isRewardUnlocked(reward.id)) {
+                // Débloquer la récompense
+                pointsManager.unlockReward(reward.id)
+
+                // Afficher une animation
+                val rootView = findViewById<View>(android.R.id.content)
+                celebrationManager.showRewardUnlockedCelebration(rootView, reward.name)
+
+                // On peut débloquer une seule récompense à la fois pour ne pas surcharger l'interface
+                break
+            }
+        }
+    }
+
+    // Méthode pour afficher l'écran des récompenses
+    private fun showRewards() {
+        val intent = Intent(this, RewardsActivity::class.java)
+        startActivity(intent)
+    }
+
     @Entity(tableName = "confirmations")
     data class Confirmation(
         @PrimaryKey(autoGenerate = true) val id: Int = 0,
         val timestamp: Long,
         var isSynced: Boolean = false
     )
+
     @Dao
     interface ConfirmationDao {
         @Insert
@@ -400,6 +453,7 @@ class MainActivity : FragmentActivity() {
         @Query("UPDATE confirmations SET isSynced = 1 WHERE id = :id")
         suspend fun markAsSynced(id: Int)
     }
+
     @SuppressLint("ScheduleExactAlarm")
     private fun scheduleAlarm(triggerAtMillis: Long) {
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
@@ -408,7 +462,8 @@ class MainActivity : FragmentActivity() {
 
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
     }
-    private fun showSnoozeDialog(minutes: Int,isAdjustTime: Boolean) {
+
+    private fun showSnoozeDialog(minutes: Int, isAdjustTime: Boolean) {
         val dialog = Dialog(this, android.R.style.Theme_DeviceDefault_Dialog_NoActionBar)
         dialog.setContentView(R.layout.dialog_minute_picker)
 
@@ -420,7 +475,7 @@ class MainActivity : FragmentActivity() {
             isEdgeItemsCenteringEnabled = true
             adapter = MinutePickerAdapter(minut) { selectedMinutes ->
                 dialog.dismiss()
-                snoozeAlarm(selectedMinutes,isAdjustTime)
+                snoozeAlarm(selectedMinutes, isAdjustTime)
             }
         }
 

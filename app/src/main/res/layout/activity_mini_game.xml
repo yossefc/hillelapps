@@ -1,0 +1,49 @@
+<androidx.wear.widget.BoxInsetLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:deviceIds="wear">
+
+    <FrameLayout
+        android:id="@+id/gameView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_boxedEdges="all">
+
+        <TextView
+            android:id="@+id/scoreTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Score: 0"
+            android:textSize="14sp"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="8dp"/>
+
+        <ImageView
+            android:id="@+id/characterView"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_character"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:id="@+id/targetView"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_target"
+            android:layout_gravity="center"/>
+
+        <Button
+            android:id="@+id/quitGameButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Terminer"
+            android:textSize="12sp"
+            android:background="@drawable/custum_button_grey"
+            android:textColor="#FFFFFF"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="8dp"/>
+    </FrameLayout>
+</androidx.wear.widget.BoxInsetLayout>
